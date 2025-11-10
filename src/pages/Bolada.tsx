@@ -33,9 +33,9 @@ const Bolada = () => {
             </div>
             <p className="text-muted-foreground mb-8">Premiação atual</p>
 
-            {/* Circular Progress Wheel */}
+            {/* Circular Progress Wheel - Spinning */}
             <div className="relative w-64 h-64 mx-auto mb-8">
-              <svg className="w-full h-full -rotate-90">
+              <svg className="w-full h-full -rotate-90 animate-[spin_10s_linear_infinite]">
                 {/* Background circle */}
                 <circle
                   cx="128"
@@ -69,10 +69,15 @@ const Bolada = () => {
                 })}
               </svg>
               
-              {/* Center text */}
+              {/* Center text - NOT rotating */}
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <div className="text-3xl font-bold text-foreground">FIAR</div>
+                <div className="text-3xl font-bold text-foreground animate-glow-pulse">FIAR</div>
                 <div className="text-sm text-muted-foreground">GANHAR</div>
+              </div>
+              
+              {/* Winner indicator arrow at top */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-4">
+                <div className="w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-primary drop-shadow-[0_0_10px_rgba(0,255,255,0.8)]" />
               </div>
             </div>
           </Card>

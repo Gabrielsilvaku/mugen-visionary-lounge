@@ -1,16 +1,52 @@
 import { Button } from "@/components/ui/button";
-import { Bell, User, Shield, LogOut } from "lucide-react";
-import { useState } from "react";
+import { Bell, User, Shield, LogOut, Wallet } from "lucide-react";
+import { useState, useEffect } from "react";
 import { WalletModal } from "./WalletModal";
 import { Link, useLocation } from "react-router-dom";
-import logoCharacter from "@/assets/logo-character.jpeg";
+import { getBalance } from "@/lib/solana";
+import { PublicKey } from "@solana/web3.js";
+import profileIcon from "@/assets/profile-icon.jpeg";
 
 export const Header = () => {
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
   const [connectedWallet, setConnectedWallet] = useState<string | null>(null);
+  const [walletType, setWalletType] = useState<string | null>(null);
+  const [balance, setBalance] = useState<number>(0);
   const location = useLocation();
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    if (connectedWallet) {
+      // Fetch balance
+      const fetchBalance = async () => {
+        try {
+          const publicKey = new PublicKey(connectedWallet);
+          const bal = await getBalance(publicKey);
+          setBalance(bal);
+        } catch (error) {
+          console.error('Error fetching balance:', error);
+        }
+      };
+      
+      fetchBalance();
+      
+      // Update balance every 10 seconds
+      const interval = setInterval(fetchBalance, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [connectedWallet]);
+
+  const handleConnect = (address: string, type: string) => {
+    setConnectedWallet(address);
+    setWalletType(type);
+  };
+
+  const handleDisconnect = () => {
+    setConnectedWallet(null);
+    setWalletType(null);
+    setBalance(0);
+  };
 
   return (
     <>
@@ -18,9 +54,9 @@ export const Header = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img 
-              src={logoCharacter} 
+              src={profileIcon} 
               alt="ZPOWERSOL" 
-              className="h-12 w-12 object-contain"
+              className="h-12 w-12 object-contain rounded-full"
             />
             <div>
               <div className="text-xl font-bold text-foreground tracking-wider">ZPOWERSOL</div>
@@ -53,6 +89,16 @@ export const Header = () => {
                 Bolada
               </Button>
             </Link>
+            <Button 
+              variant="ghost" 
+              className="text-foreground hover:text-secondary hover:bg-transparent transition-colors relative group"
+              disabled
+            >
+              Mugen Future
+              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-card border border-secondary px-2 py-1 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                Em Breve
+              </span>
+            </Button>
           </nav>
 
           <div className="flex items-center gap-3">
@@ -66,6 +112,13 @@ export const Header = () => {
             
             {connectedWallet ? (
               <>
+                <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-card-glass border border-primary/30 rounded-lg">
+                  <div className="text-right">
+                    <div className="text-xs text-muted-foreground">Saldo</div>
+                    <div className="text-sm font-bold text-primary">{balance.toFixed(4)} SOL</div>
+                  </div>
+                </div>
+                
                 <Button 
                   variant="outline"
                   className="border-primary text-primary hover:bg-primary/10"
@@ -82,14 +135,22 @@ export const Header = () => {
                 </Button>
                 <Button 
                   variant="outline"
-                  className="border-primary text-primary hover:bg-primary/10"
-                  onClick={() => setConnectedWallet(null)}
+                  className="border-destructive text-destructive hover:bg-destructive/10"
+                  onClick={handleDisconnect}
                 >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair
                 </Button>
               </>
-            ) : null}
+            ) : (
+              <Button 
+                onClick={() => setIsWalletModalOpen(true)}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-neon-cyan font-semibold"
+              >
+                <Wallet className="mr-2 h-4 w-4" />
+                Conectar
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -97,7 +158,7 @@ export const Header = () => {
       <WalletModal 
         isOpen={isWalletModalOpen} 
         onClose={() => setIsWalletModalOpen(false)}
-        onConnect={setConnectedWallet}
+        onConnect={handleConnect}
       />
     </>
   );
