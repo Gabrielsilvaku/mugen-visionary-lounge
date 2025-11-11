@@ -4,10 +4,19 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import coinHeads from "@/assets/coin-heads.png";
 
 const Coinflip = () => {
   const [betAmount, setBetAmount] = useState("0,1");
   const [selectedSide, setSelectedSide] = useState<"heads" | "tails" | null>(null);
+  const [isFlipping, setIsFlipping] = useState(false);
+
+  const handleFlip = () => {
+    setIsFlipping(true);
+    setTimeout(() => {
+      setIsFlipping(false);
+    }, 3000);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -19,6 +28,16 @@ const Coinflip = () => {
           <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">COINFLIP</h1>
           <p className="text-xl text-primary">O dobro ou nada! Escolha o seu lado</p>
         </div>
+
+        {isFlipping && (
+          <div className="flex justify-center mb-8">
+            <img 
+              src={coinHeads} 
+              alt="Coin" 
+              className="w-32 h-32 animate-[spin_1s_linear_infinite]"
+            />
+          </div>
+        )}
 
         <Card className="max-w-4xl mx-auto bg-card-glass border-2 border-secondary/40 p-8 shadow-neon-purple">
           <div className="mb-8">
@@ -77,10 +96,11 @@ const Coinflip = () => {
           </div>
 
           <Button 
-            disabled={!selectedSide}
+            onClick={handleFlip}
+            disabled={!selectedSide || isFlipping}
             className="w-full bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 py-6 text-xl font-bold shadow-intense"
           >
-            {selectedSide ? "Lançar Moeda" : "Escolha um lado"}
+            {isFlipping ? "GIRANDO..." : selectedSide ? "Lançar Moeda" : "Escolha um lado"}
           </Button>
         </Card>
       </main>

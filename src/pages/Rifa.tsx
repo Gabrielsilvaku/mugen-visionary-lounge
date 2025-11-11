@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
 const Rifa = () => {
-  const progress = (8500 / 17000) * 100;
+  const progress = (1200 / 2000) * 100;
 
   return (
     <div className="min-h-screen bg-background">
@@ -15,26 +15,26 @@ const Rifa = () => {
       
       <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">MEGA SORTEIO</h1>
-          <p className="text-xl text-primary">Ganhe todo o prêmio! Sorteio em 45 dias</p>
+          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">RIFFA SEMANAL</h1>
+          <p className="text-xl text-primary">Ganhe todo o prêmio! Sorteio em 7 dias</p>
         </div>
 
         <Card className="max-w-4xl mx-auto bg-card-glass border-2 border-primary/40 p-8 shadow-neon-cyan">
           <div className="mb-6">
             <div className="flex justify-between mb-3">
               <span className="text-foreground font-semibold">Progresso da premiação</span>
-              <span className="text-primary font-bold">$8.500 / $ 17.000</span>
+              <span className="text-primary font-bold">$1.200 / $2.000</span>
             </div>
             <Progress value={progress} className="h-4" />
           </div>
 
           <div className="grid grid-cols-4 gap-4 mb-8 text-center">
             <div>
-              <div className="text-4xl font-bold text-primary mb-1">8500</div>
+              <div className="text-4xl font-bold text-primary mb-1">1200</div>
               <p className="text-sm text-muted-foreground">Ingressos vendidos</p>
             </div>
             <div>
-              <div className="text-4xl font-bold text-secondary mb-1">1500</div>
+              <div className="text-4xl font-bold text-secondary mb-1">800</div>
               <p className="text-sm text-muted-foreground">Disponível</p>
             </div>
             <div>
@@ -42,7 +42,7 @@ const Rifa = () => {
               <p className="text-sm text-muted-foreground">SOL/Bilhete</p>
             </div>
             <div>
-              <div className="text-4xl font-bold text-secondary mb-1">45</div>
+              <div className="text-4xl font-bold text-secondary mb-1">7</div>
               <p className="text-sm text-muted-foreground">Dias restantes</p>
             </div>
           </div>
