@@ -3,29 +3,44 @@ import { FloatingChat } from "@/components/FloatingChat";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import coinHeads from "@/assets/coin-heads.png";
+import coinTails from "@/assets/coin-tails.png";
+
+// Simulação simples de matchmaking 1v1
+const getOpponentSide = () => (Math.random() > 0.5 ? "heads" : "tails");
 
 const Coinflip = () => {
   const [betAmount, setBetAmount] = useState("0,1");
   const [selectedSide, setSelectedSide] = useState<"heads" | "tails" | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
   const [result, setResult] = useState<"heads" | "tails" | null>(null);
+  const [opponentSide, setOpponentSide] = useState<"heads" | "tails" | null>(null);
 
   const handleFlip = () => {
     if (!selectedSide) return;
-    
+
     setIsFlipping(true);
     setResult(null);
-    
-    // Simulate coin flip result after 3 seconds
+
+    // Se não houver outro jogador, joga contra bot
+    const opponent = opponentSide || getOpponentSide();
+    setOpponentSide(opponent);
+
+    let flipCount = 0;
+    const flipInterval = setInterval(() => {
+      flipCount++;
+      setResult(flipCount % 2 === 0 ? "heads" : "tails");
+    }, 100);
+
     setTimeout(() => {
+      clearInterval(flipInterval);
       const flipResult = Math.random() > 0.5 ? "heads" : "tails";
       setResult(flipResult);
       setIsFlipping(false);
-      
-      // Show notification
+
+      // Notificação de vitória
       if (flipResult === selectedSide) {
         toast.success("🎉 Você ganhou!", {
           description: `Ganhou ${parseFloat(betAmount.replace(',', '.')) * 2} SOL`
@@ -35,30 +50,31 @@ const Coinflip = () => {
           description: `Perdeu ${betAmount} SOL`
         });
       }
-    }, 3000);
+    }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <FloatingChat />
-      
+
       <main className="container mx-auto px-4 pt-24 pb-12">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">COINFLIP</h1>
-          <p className="text-xl text-primary">O dobro ou nada! Escolha o seu lado</p>
+          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">COINFLIP 1v1</h1>
+          <p className="text-xl text-primary">Escolha um lado e desafie outro jogador ou o bot</p>
         </div>
 
         {(isFlipping || result) && (
           <div className="flex flex-col items-center mb-8">
-            <img 
-              src={coinHeads} 
-              alt="Coin" 
-              className={`w-32 h-32 ${isFlipping ? 'animate-[spin_0.5s_linear_infinite]' : ''}`}
+            <img
+              src={result === "heads" ? coinHeads : coinTails}
+              alt="Coin"
+              className={`w-32 h-32 ${isFlipping ? 'animate-spin-slow' : ''}`}
             />
             {result && !isFlipping && (
               <div className={`mt-4 text-2xl font-bold ${result === selectedSide ? 'text-green-500' : 'text-red-500'}`}>
-                {result === "heads" ? "Z (Cara)" : "M (Coroa)"}
+                {result === "heads" ? "Z (Cara)" : "M (Coroa)"} <br />
+                Oponente: {opponentSide === "heads" ? "Z (Cara)" : "M (Coroa)"}
               </div>
             )}
           </div>
@@ -69,7 +85,7 @@ const Coinflip = () => {
             <label className="block text-center text-foreground mb-3 font-semibold">
               Valor da aposta (SOL)
             </label>
-            <Input 
+            <Input
               value={betAmount}
               onChange={(e) => setBetAmount(e.target.value)}
               className="bg-background/50 border-2 border-primary/30 text-foreground text-center text-2xl font-bold max-w-sm mx-auto"
@@ -77,7 +93,7 @@ const Coinflip = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
-            {/* Cabeças (Z) - Cyan */}
+            {/* Cabeças (Z) */}
             <button
               onClick={() => setSelectedSide("heads")}
               className={`bg-background/50 border-3 ${
@@ -85,20 +101,13 @@ const Coinflip = () => {
               } rounded-lg p-8 hover:border-primary transition-all group`}
             >
               <div className="flex flex-col items-center gap-4">
-                <div className={`w-32 h-32 rounded-full border-4 ${
-                  selectedSide === "heads" ? "border-primary" : "border-primary/50"
-                } flex items-center justify-center group-hover:border-primary transition-all`}>
-                  <div className={`w-24 h-24 rounded-full border-4 ${
-                    selectedSide === "heads" ? "border-primary" : "border-primary/50"
-                  } group-hover:border-primary transition-all`} />
-                </div>
                 <div className="text-5xl font-bold text-primary">Z</div>
                 <div className="text-sm text-muted-foreground">CABEÇAS</div>
                 <div className="text-lg font-semibold text-primary">2x Vitória</div>
               </div>
             </button>
 
-            {/* Coroa (M) - Purple */}
+            {/* Coroa (M) */}
             <button
               onClick={() => setSelectedSide("tails")}
               className={`bg-background/50 border-3 ${
@@ -106,13 +115,6 @@ const Coinflip = () => {
               } rounded-lg p-8 hover:border-secondary transition-all group`}
             >
               <div className="flex flex-col items-center gap-4">
-                <div className={`w-32 h-32 rounded-full border-4 ${
-                  selectedSide === "tails" ? "border-secondary" : "border-secondary/50"
-                } flex items-center justify-center group-hover:border-secondary transition-all`}>
-                  <div className={`w-24 h-24 rounded-full border-4 ${
-                    selectedSide === "tails" ? "border-secondary" : "border-secondary/50"
-                  } group-hover:border-secondary transition-all`} />
-                </div>
                 <div className="text-5xl font-bold text-secondary">M</div>
                 <div className="text-sm text-muted-foreground">COROA</div>
                 <div className="text-lg font-semibold text-secondary">2x Vitória</div>
@@ -120,7 +122,7 @@ const Coinflip = () => {
             </button>
           </div>
 
-          <Button 
+          <Button
             onClick={handleFlip}
             disabled={!selectedSide || isFlipping}
             className="w-full bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 py-6 text-xl font-bold shadow-intense"
