@@ -33,9 +33,9 @@ const Bolada = () => {
             </div>
             <p className="text-muted-foreground mb-8">Premiação atual</p>
 
-            {/* Circular Progress Wheel - Spinning */}
+            {/* Circular Progress Wheel - Spinning Slowly */}
             <div className="relative w-64 h-64 mx-auto mb-8">
-              <svg className="w-full h-full -rotate-90 animate-[spin_10s_linear_infinite]">
+              <svg className="w-full h-full -rotate-90 animate-[spin_20s_linear_infinite]">
                 {/* Background circle */}
                 <circle
                   cx="128"

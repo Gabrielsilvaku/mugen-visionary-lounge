@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { connectWallet, detectWallets } from "@/lib/solana";
 import { X } from "lucide-react";
+import phantomLogo from "@/assets/phantom-logo.png";
+import solflareLogo from "@/assets/solflare-logo.png";
+import coin98Logo from "@/assets/coin98-logo.png";
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -14,20 +17,17 @@ const wallets = [
   {
     name: "Phantom",
     key: "phantom",
-    icon: "👻",
-    color: "bg-purple-600",
+    logo: phantomLogo,
   },
   {
     name: "Solflare",
     key: "solflare",
-    icon: "☀️",
-    color: "bg-orange-600",
+    logo: solflareLogo,
   },
   {
     name: "Coin98",
     key: "coin98",
-    icon: "🎯",
-    color: "bg-yellow-600",
+    logo: coin98Logo,
   },
 ];
 
@@ -76,7 +76,7 @@ export const WalletModal = ({ isOpen, onClose, onConnect }: WalletModalProps) =>
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-background border-2 border-border max-w-md p-0">
+      <DialogContent className="bg-background border-2 border-border max-w-sm p-0">
         <div className="relative">
           <Button
             onClick={onClose}
@@ -94,21 +94,22 @@ export const WalletModal = ({ isOpen, onClose, onConnect }: WalletModalProps) =>
             </DialogTitle>
           </DialogHeader>
           
-          <div className="px-6 pb-6 space-y-2">
+          <div className="px-6 pb-6 flex gap-4 justify-center">
             {wallets.map((wallet) => (
-              <Button
+              <button
                 key={wallet.key}
                 onClick={() => handleConnect(wallet.key, wallet.name)}
-                className="w-full bg-transparent border-0 hover:bg-accent justify-start h-14 text-base font-normal"
-                variant="ghost"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-accent transition-all group"
               >
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-lg ${wallet.color} flex items-center justify-center text-xl`}>
-                    {wallet.icon}
-                  </div>
-                  <span className="text-foreground">{wallet.name}</span>
+                <div className="w-14 h-14 rounded-lg bg-background border border-border flex items-center justify-center group-hover:border-primary transition-all">
+                  <img 
+                    src={wallet.logo} 
+                    alt={wallet.name}
+                    className="w-10 h-10 object-contain"
+                  />
                 </div>
-              </Button>
+                <span className="text-sm text-foreground font-medium">{wallet.name}</span>
+              </button>
             ))}
           </div>
         </div>

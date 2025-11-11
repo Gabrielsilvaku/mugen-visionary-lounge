@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 
 export const FloatingChat = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasNewMessage, setHasNewMessage] = useState(true);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([
     { user: "Sistema", text: "Bem-vindo ao chat!", time: "agora" },
@@ -14,7 +15,13 @@ export const FloatingChat = () => {
     if (message.trim()) {
       setMessages([...messages, { user: "Você", text: message, time: "agora" }]);
       setMessage("");
+      setHasNewMessage(false);
     }
+  };
+
+  const handleOpen = () => {
+    setIsOpen(true);
+    setHasNewMessage(false);
   };
 
   return (
@@ -22,10 +29,15 @@ export const FloatingChat = () => {
       {/* Chat Bubble Button */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-primary shadow-intense flex items-center justify-center hover:scale-110 transition-transform z-50 animate-glow-pulse"
+          onClick={handleOpen}
+          className="fixed bottom-6 right-6 w-16 h-16 rounded-full bg-primary shadow-intense flex items-center justify-center hover:scale-110 transition-transform z-50 animate-glow-pulse relative"
         >
           <MessageCircle className="h-7 w-7 text-background" />
+          {hasNewMessage && (
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold animate-pulse">
+              1
+            </span>
+          )}
         </button>
       )}
 

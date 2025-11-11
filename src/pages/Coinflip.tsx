@@ -4,17 +4,37 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { toast } from "sonner";
 import coinHeads from "@/assets/coin-heads.png";
 
 const Coinflip = () => {
   const [betAmount, setBetAmount] = useState("0,1");
   const [selectedSide, setSelectedSide] = useState<"heads" | "tails" | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [result, setResult] = useState<"heads" | "tails" | null>(null);
 
   const handleFlip = () => {
+    if (!selectedSide) return;
+    
     setIsFlipping(true);
+    setResult(null);
+    
+    // Simulate coin flip result after 3 seconds
     setTimeout(() => {
+      const flipResult = Math.random() > 0.5 ? "heads" : "tails";
+      setResult(flipResult);
       setIsFlipping(false);
+      
+      // Show notification
+      if (flipResult === selectedSide) {
+        toast.success("🎉 Você ganhou!", {
+          description: `Ganhou ${parseFloat(betAmount.replace(',', '.')) * 2} SOL`
+        });
+      } else {
+        toast.error("😔 Você perdeu", {
+          description: `Perdeu ${betAmount} SOL`
+        });
+      }
     }, 3000);
   };
 
@@ -29,13 +49,18 @@ const Coinflip = () => {
           <p className="text-xl text-primary">O dobro ou nada! Escolha o seu lado</p>
         </div>
 
-        {isFlipping && (
-          <div className="flex justify-center mb-8">
+        {(isFlipping || result) && (
+          <div className="flex flex-col items-center mb-8">
             <img 
               src={coinHeads} 
               alt="Coin" 
-              className="w-32 h-32 animate-[spin_1s_linear_infinite]"
+              className={`w-32 h-32 ${isFlipping ? 'animate-[spin_0.5s_linear_infinite]' : ''}`}
             />
+            {result && !isFlipping && (
+              <div className={`mt-4 text-2xl font-bold ${result === selectedSide ? 'text-green-500' : 'text-red-500'}`}>
+                {result === "heads" ? "Z (Cara)" : "M (Coroa)"}
+              </div>
+            )}
           </div>
         )}
 
