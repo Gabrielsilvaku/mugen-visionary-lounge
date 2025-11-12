@@ -8,15 +8,16 @@ import { toast } from "sonner";
 import coinHeads from "@/assets/coin-heads.png";
 import coinTails from "@/assets/coin-tails.png";
 
-// Simulação simples de matchmaking 1v1
+// Função para simular o lado do oponente (bot)
 const getOpponentSide = () => (Math.random() > 0.5 ? "heads" : "tails");
 
 const Coinflip = () => {
   const [betAmount, setBetAmount] = useState("0,1");
-  const [selectedSide, setSelectedSide] = useState<"heads" | "tails" | null>(null);
+  const [selectedSide, setSelectedSide] = useState(null);
   const [isFlipping, setIsFlipping] = useState(false);
-  const [result, setResult] = useState<"heads" | "tails" | null>(null);
-  const [opponentSide, setOpponentSide] = useState<"heads" | "tails" | null>(null);
+  const [result, setResult] = useState(null);
+  const [opponentSide, setOpponentSide] = useState(null);
+  const [spinClass, setSpinClass] = useState("");
 
   const handleFlip = () => {
     if (!selectedSide) return;
@@ -24,23 +25,20 @@ const Coinflip = () => {
     setIsFlipping(true);
     setResult(null);
 
-    // Se não houver outro jogador, joga contra bot
+    // Determina lado do oponente
     const opponent = opponentSide || getOpponentSide();
     setOpponentSide(opponent);
 
-    let flipCount = 0;
-    const flipInterval = setInterval(() => {
-      flipCount++;
-      setResult(flipCount % 2 === 0 ? "heads" : "tails");
-    }, 100);
+    // Adiciona animação de spin
+    setSpinClass("animate-spin");
 
     setTimeout(() => {
-      clearInterval(flipInterval);
+      setSpinClass(""); // Para animação
       const flipResult = Math.random() > 0.5 ? "heads" : "tails";
       setResult(flipResult);
       setIsFlipping(false);
 
-      // Notificação de vitória
+      // Notificação de vitória ou derrota
       if (flipResult === selectedSide) {
         toast.success("🎉 Você ganhou!", {
           description: `Ganhou ${parseFloat(betAmount.replace(',', '.')) * 2} SOL`
@@ -50,7 +48,7 @@ const Coinflip = () => {
           description: `Perdeu ${betAmount} SOL`
         });
       }
-    }, 2000);
+    }, 2000); // duração da simulação do flip
   };
 
   return (
@@ -69,12 +67,14 @@ const Coinflip = () => {
             <img
               src={result === "heads" ? coinHeads : coinTails}
               alt="Coin"
-              className={`w-32 h-32 ${isFlipping ? 'animate-spin-slow' : ''}`}
+              className={`w-32 h-32 ${spinClass}`}
             />
             {result && !isFlipping && (
               <div className={`mt-4 text-2xl font-bold ${result === selectedSide ? 'text-green-500' : 'text-red-500'}`}>
-                {result === "heads" ? "Z (Cara)" : "M (Coroa)"} <br />
-                Oponente: {opponentSide === "heads" ? "Z (Cara)" : "M (Coroa)"}
+                Resultado: {result === "heads" ? "Z (Cara)" : "M (Coroa)"}
+                {opponentSide && (
+                  <><br />Oponente: {opponentSide === "heads" ? "Z (Cara)" : "M (Coroa)"}</>
+                )}
               </div>
             )}
           </div>
@@ -93,7 +93,6 @@ const Coinflip = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
-            {/* Cabeças (Z) */}
             <button
               onClick={() => setSelectedSide("heads")}
               className={`bg-background/50 border-3 ${
@@ -107,7 +106,6 @@ const Coinflip = () => {
               </div>
             </button>
 
-            {/* Coroa (M) */}
             <button
               onClick={() => setSelectedSide("tails")}
               className={`bg-background/50 border-3 ${
