@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
 import { toast } from "sonner";
-import coinGoku from "@/assets/goku.png";
-import coinVegeta from "@/assets/vegeta.png";
+import coinHeads from "@/assets/coin-heads.png";
 
 const socket = io("http://localhost:3001");
 
@@ -38,17 +37,17 @@ export default function CoinflipDB() {
       <h1 className="text-4xl font-bold mb-6">Coinflip Dragon Ball 1v1</h1>
       <div className="flex gap-6 mb-6">
         <button onClick={() => handleFlip("heads")} className="w-32 h-32 rounded-full shadow-lg hover:scale-105 transition-transform">
-          <img src={coinGoku} alt="Goku" className="w-full h-full object-cover rounded-full" />
+          <img src={coinHeads} alt="Heads" className="w-full h-full object-cover rounded-full" />
         </button>
         <button onClick={() => handleFlip("tails")} className="w-32 h-32 rounded-full shadow-lg hover:scale-105 transition-transform">
-          <img src={coinVegeta} alt="Vegeta" className="w-full h-full object-cover rounded-full" />
+          <img src={coinHeads} alt="Tails" className="w-full h-full object-cover rounded-full" />
         </button>
       </div>
 
       {result && (
         <div className="text-center text-2xl font-bold mb-6">
-          Resultado: {result === "heads" ? "Goku" : "Vegeta"} <br />
-          Oponente: {opponentSide === "heads" ? "Goku" : opponentSide === "tails" ? "Vegeta" : "Aguardando..."}
+          Resultado: {result === "heads" ? "Heads" : "Tails"} <br />
+          Oponente: {opponentSide === "heads" ? "Heads" : opponentSide === "tails" ? "Tails" : "Aguardando..."}
         </div>
       )}
     </div>
