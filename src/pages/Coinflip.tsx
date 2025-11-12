@@ -1,49 +1,142 @@
+import { Header } from "@/components/Header";
+import { FloatingChat } from "@/components/FloatingChat";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import coinHeads from "@/assets/coin-heads.png";
 import coinTails from "@/assets/coin-tails.png";
 
+// Função simples de "oponente" (bot) 1v1
+const getOpponentSide = () => (Math.random() > 0.5 ? "heads" : "tails");
+
 const Coinflip = () => {
-  const [player1Side, setPlayer1Side] = useState<"heads" | "tails" | null>(null);
-  const [player2Side, setPlayer2Side] = useState<"heads" | "tails" | null>(null);
-  const [result, setResult] = useState<"heads" | "tails" | null>(null);
+  const [betAmount, setBetAmount] = useState("0,1");
+  const [selectedSide, setSelectedSide] = useState<"heads" | "tails" | null>(null);
   const [isFlipping, setIsFlipping] = useState(false);
+  const [result, setResult] = useState<"heads" | "tails" | null>(null);
+  const [opponentSide, setOpponentSide] = useState<"heads" | "tails" | null>(null);
 
   const handleFlip = () => {
-    if (!player1Side) return;
+    if (!selectedSide) return;
+
     setIsFlipping(true);
+    setResult(null);
 
-    // Simula adversário automático
-    const botSide = Math.random() > 0.5 ? "heads" : "tails";
-    setPlayer2Side(botSide);
+    // Definindo o lado do oponente (bot)
+    const opponent = opponentSide || getOpponentSide();
+    setOpponentSide(opponent);
 
+    // Animação simples de "giro"
+    let flipCount = 0;
+    const flipInterval = setInterval(() => {
+      flipCount++;
+      setResult(flipCount % 2 === 0 ? "heads" : "tails");
+    }, 100);
+
+    // Resultado final após 2s
     setTimeout(() => {
+      clearInterval(flipInterval);
       const flipResult = Math.random() > 0.5 ? "heads" : "tails";
       setResult(flipResult);
       setIsFlipping(false);
+
+      // Notificação de vitória/derrota
+      if (flipResult === selectedSide) {
+        toast.success("🎉 Você ganhou!", {
+          description: `Ganhou ${parseFloat(betAmount.replace(",", ".")) * 2} SOL`,
+        });
+      } else {
+        toast.error("😔 Você perdeu", {
+          description: `Perdeu ${betAmount} SOL`,
+        });
+      }
     }, 2000);
   };
 
   return (
-    <div>
-      <h1>COINFLIP 1v1</h1>
+    <div className="min-h-screen bg-background">
+      <Header />
+      <FloatingChat />
 
-      <div>
-        <button onClick={() => setPlayer1Side("heads")}>Cara (Z)</button>
-        <button onClick={() => setPlayer1Side("tails")}>Coroa (M)</button>
-      </div>
-
-      <button onClick={handleFlip} disabled={!player1Side || isFlipping}>
-        {isFlipping ? "Girando..." : "Lançar Moeda"}
-      </button>
-
-      {result && (
-        <div>
-          Resultado: {result === "heads" ? "Z (Cara)" : "M (Coroa)"} <br />
-          Oponente: {player2Side === "heads" ? "Z (Cara)" : "M (Coroa)"}
+      <main className="container mx-auto px-4 pt-24 pb-12">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-wider">COINFLIP 1v1</h1>
+          <p className="text-xl text-primary">Escolha um lado e desafie outro jogador ou o bot</p>
         </div>
-      )}
 
-      {isFlipping && <img src={coinHeads} alt="coin" className="animate-spin" />}
+        {(isFlipping || result) && (
+          <div className="flex flex-col items-center mb-8">
+            <img
+              src={result === "heads" ? coinHeads : coinTails}
+              alt="Coin"
+              className={`w-32 h-32 ${isFlipping ? 'animate-spin-slow' : ''}`}
+            />
+            {result && !isFlipping && (
+              <div className="mt-4 text-2xl font-bold">
+                <span className={result === selectedSide ? 'text-green-500' : 'text-red-500'}>
+                  {result === "heads" ? "Z (Cara)" : "M (Coroa)"}
+                </span>{" "}
+                <span className="ml-4 text-sm text-muted-foreground">
+                  Oponente: {opponentSide === "heads" ? "Z (Cara)" : "M (Coroa)"}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        <Card className="max-w-4xl mx-auto bg-card-glass border-2 border-secondary/40 p-8 shadow-neon-purple">
+          <div className="mb-8">
+            <label className="block text-center text-foreground mb-3 font-semibold">
+              Valor da aposta (SOL)
+            </label>
+            <Input
+              value={betAmount}
+              onChange={(e) => setBetAmount(e.target.value)}
+              className="bg-background/50 border-2 border-primary/30 text-foreground text-center text-2xl font-bold max-w-sm mx-auto"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-6 mb-8">
+            {/* Cabeças (Z) */}
+            <button
+              onClick={() => setSelectedSide("heads")}
+              className={`bg-background/50 border-3 ${
+                selectedSide === "heads" ? "border-primary shadow-intense" : "border-primary/30"
+              } rounded-lg p-8 hover:border-primary transition-all group`}
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-5xl font-bold text-primary">Z</div>
+                <div className="text-sm text-muted-foreground">CABEÇAS</div>
+                <div className="text-lg font-semibold text-primary">2x Vitória</div>
+              </div>
+            </button>
+
+            {/* Coroa (M) */}
+            <button
+              onClick={() => setSelectedSide("tails")}
+              className={`bg-background/50 border-3 ${
+                selectedSide === "tails" ? "border-secondary shadow-neon-purple" : "border-secondary/30"
+              } rounded-lg p-8 hover:border-secondary transition-all group`}
+            >
+              <div className="flex flex-col items-center gap-4">
+                <div className="text-5xl font-bold text-secondary">M</div>
+                <div className="text-sm text-muted-foreground">COROA</div>
+                <div className="text-lg font-semibold text-secondary">2x Vitória</div>
+              </div>
+            </button>
+          </div>
+
+          <Button
+            onClick={handleFlip}
+            disabled={!selectedSide || isFlipping}
+            className="w-full bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 py-6 text-xl font-bold shadow-intense"
+          >
+            {isFlipping ? "GIRANDO..." : selectedSide ? "Lançar Moeda" : "Escolha um lado"}
+          </Button>
+        </Card>
+      </main>
     </div>
   );
 };
