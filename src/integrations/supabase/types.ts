@@ -14,7 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      coinflip_history: {
+        Row: {
+          bet_amount: number
+          chosen_side: string
+          created_at: string | null
+          id: string
+          payout: number | null
+          player_wallet: string
+          result: string
+          room_id: string | null
+          won: boolean
+        }
+        Insert: {
+          bet_amount: number
+          chosen_side: string
+          created_at?: string | null
+          id?: string
+          payout?: number | null
+          player_wallet: string
+          result: string
+          room_id?: string | null
+          won: boolean
+        }
+        Update: {
+          bet_amount?: number
+          chosen_side?: string
+          created_at?: string | null
+          id?: string
+          payout?: number | null
+          player_wallet?: string
+          result?: string
+          room_id?: string | null
+          won?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coinflip_history_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "coinflip_rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coinflip_rooms: {
+        Row: {
+          bet_amount: number
+          created_at: string | null
+          creator_side: string
+          creator_wallet: string
+          finished_at: string | null
+          id: string
+          opponent_side: string | null
+          opponent_wallet: string | null
+          result: string | null
+          started_at: string | null
+          status: string
+          winner_wallet: string | null
+        }
+        Insert: {
+          bet_amount: number
+          created_at?: string | null
+          creator_side: string
+          creator_wallet: string
+          finished_at?: string | null
+          id?: string
+          opponent_side?: string | null
+          opponent_wallet?: string | null
+          result?: string | null
+          started_at?: string | null
+          status?: string
+          winner_wallet?: string | null
+        }
+        Update: {
+          bet_amount?: number
+          created_at?: string | null
+          creator_side?: string
+          creator_wallet?: string
+          finished_at?: string | null
+          id?: string
+          opponent_side?: string | null
+          opponent_wallet?: string | null
+          result?: string | null
+          started_at?: string | null
+          status?: string
+          winner_wallet?: string | null
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          created_at: string | null
+          id: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
