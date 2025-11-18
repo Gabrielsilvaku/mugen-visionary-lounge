@@ -3,9 +3,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { connectWallet, detectWallets } from "@/lib/solana";
 import { X } from "lucide-react";
-import phantomLogo from "@/assets/phantom-logo.png";
-import solflareLogo from "@/assets/solflare-logo.png";
-import coin98Logo from "@/assets/coin98-logo.png";
+import phantomLogo from "@/assets/phantom-logo.webp";
+import solflareLogo from "@/assets/solflare-logo.webp";
+import coin98Logo from "@/assets/coin98-logo.webp";
 
 interface WalletModalProps {
   isOpen: boolean;
@@ -37,39 +37,39 @@ export const WalletModal = ({ isOpen, onClose, onConnect }: WalletModalProps) =>
       const installedWallets = detectWallets();
       
       if (walletKey === 'phantom' && !installedWallets.phantom) {
-        toast.error("Phantom not installed", {
-          description: "Please install Phantom extension"
+        toast.error("Phantom não instalada", {
+          description: "Por favor instale a extensão Phantom"
         });
         window.open('https://phantom.app/', '_blank');
         return;
       }
       
       if (walletKey === 'solflare' && !installedWallets.solflare) {
-        toast.error("Solflare not installed", {
-          description: "Please install Solflare extension"
+        toast.error("Solflare não instalada", {
+          description: "Por favor instale a extensão Solflare"
         });
         window.open('https://solflare.com/', '_blank');
         return;
       }
       
       if (walletKey === 'coin98' && !installedWallets.coin98) {
-        toast.error("Coin98 not installed", {
-          description: "Please install Coin98 extension"
+        toast.error("Coin98 não instalada", {
+          description: "Por favor instale a extensão Coin98"
         });
         window.open('https://coin98.com/', '_blank');
         return;
       }
       
-      toast.loading("Connecting...");
+      toast.loading("Conectando...");
       const address = await connectWallet(walletKey as 'phantom' | 'solflare' | 'coin98');
       toast.dismiss();
-      toast.success("Wallet connected!");
+      toast.success("Carteira conectada!");
       onConnect(address, walletKey);
       onClose();
     } catch (error: any) {
       toast.dismiss();
-      toast.error("Error connecting", {
-        description: error.message || "Try again"
+      toast.error("Erro ao conectar", {
+        description: error.message || "Tente novamente"
       });
     }
   };
@@ -88,9 +88,9 @@ export const WalletModal = ({ isOpen, onClose, onConnect }: WalletModalProps) =>
           
           <DialogHeader className="p-6 pb-4">
             <DialogTitle className="text-xl font-semibold text-center text-foreground">
-              Connect a wallet on
+              Conecte uma carteira na
               <br />
-              Solana to continue
+              Solana para continuar
             </DialogTitle>
           </DialogHeader>
           
@@ -99,13 +99,13 @@ export const WalletModal = ({ isOpen, onClose, onConnect }: WalletModalProps) =>
               <button
                 key={wallet.key}
                 onClick={() => handleConnect(wallet.key, wallet.name)}
-                className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-accent transition-all group"
+                className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-accent/10 transition-all group"
               >
-                <div className="w-14 h-14 rounded-lg bg-background border border-border flex items-center justify-center group-hover:border-primary transition-all">
+                <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center group-hover:scale-110 transition-transform">
                   <img 
                     src={wallet.logo} 
                     alt={wallet.name}
-                    className="w-10 h-10 object-contain"
+                    className="w-14 h-14 object-contain"
                   />
                 </div>
                 <span className="text-sm text-foreground font-medium">{wallet.name}</span>
