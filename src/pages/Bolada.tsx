@@ -3,15 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Header } from "@/components/Header";
-import { Users, Trophy, Coins } from "lucide-react";
+import { WalletModal } from "@/components/WalletModal";
+import { Roulette3D } from "@/components/Roulette3D";
+import { Users, Trophy, Coins, Play } from "lucide-react";
 
 const dbCharacters = [
-  { name: "Goku", color: "bg-orange-500", borderColor: "border-orange-400" },
-  { name: "Vegeta", color: "bg-blue-500", borderColor: "border-blue-400" },
-  { name: "Gohan", color: "bg-purple-500", borderColor: "border-purple-400" },
-  { name: "Piccolo", color: "bg-green-500", borderColor: "border-green-400" },
-  { name: "Trunks", color: "bg-indigo-500", borderColor: "border-indigo-400" },
-  { name: "Krillin", color: "bg-yellow-500", borderColor: "border-yellow-400" },
+  { name: "Goku", color: "from-orange-500 to-red-500" },
+  { name: "Vegeta", color: "from-blue-500 to-indigo-600" },
+  { name: "Gohan", color: "from-purple-500 to-pink-600" },
+  { name: "Piccolo", color: "from-green-500 to-emerald-600" },
+  { name: "Trunks", color: "from-indigo-500 to-blue-600" },
+  { name: "Krillin", color: "from-yellow-500 to-orange-500" },
 ];
 
 export default function JackpotDB() {
@@ -19,8 +21,21 @@ export default function JackpotDB() {
   const [winner, setWinner] = useState<{id: string, character: string, bet: number} | null>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [totalPot, setTotalPot] = useState(0);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [winnerIndex, setWinnerIndex] = useState<number>();
+
+  const handleConnect = (address: string) => {
+    setWalletAddress(address);
+    toast.success("Carteira conectada!");
+  };
 
   const handleJoin = () => {
+    if (!walletAddress) {
+      setShowWalletModal(true);
+      return;
+    }
+
     if (players.length >= 6) {
       toast.error("Sala cheia! Máximo 6 jogadores");
       return;
@@ -36,7 +51,7 @@ export default function JackpotDB() {
 
     setPlayers([...players, newPlayer]);
     setTotalPot(totalPot + randomBet);
-    toast.success(`${newPlayer.id} entrou como ${randomCharacter}! 🐉`, {
+    toast.success(`${newPlayer.id} entrou como ${randomCharacter}!`, {
       description: `Aposta: ${randomBet} SOL`
     });
   };
@@ -51,11 +66,12 @@ export default function JackpotDB() {
 
     setIsSpinning(true);
     setWinner(null);
+    const targetWinnerIndex = Math.floor(Math.random() * players.length);
+    setWinnerIndex(targetWinnerIndex);
     toast.loading("Girando a roleta...", { id: "spinning" });
 
-    // Simula o giro da roleta
     setTimeout(() => {
-      const randomWinner = players[Math.floor(Math.random() * players.length)];
+      const randomWinner = players[targetWinnerIndex];
       setWinner(randomWinner);
       setIsSpinning(false);
       toast.dismiss("spinning");
@@ -64,46 +80,59 @@ export default function JackpotDB() {
         description: `${randomWinner.character} levou ${totalPot} SOL!`,
         duration: 5000,
       });
-    }, 5000);
+    }, 5500);
   };
 
   const handleReset = () => {
     setPlayers([]);
     setWinner(null);
     setTotalPot(0);
+    setWinnerIndex(undefined);
     toast.info("Jogo resetado!");
   };
 
-  const getCharacterColor = (characterName: string) => {
-    return dbCharacters.find(c => c.name === characterName) || dbCharacters[0];
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-600 via-orange-500 to-yellow-400">
+    <div className="min-h-screen bg-background">
       <Header />
       
-      <div className="container mx-auto px-4 py-16">
+      <WalletModal 
+        isOpen={showWalletModal}
+        onClose={() => setShowWalletModal(false)}
+        onConnect={handleConnect}
+      />
+      
+      <div className="container mx-auto px-4 py-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-7xl font-bold text-white mb-4 drop-shadow-[0_0_30px_rgba(255,100,0,0.9)]" style={{ textShadow: '3px 3px 0 #cc0000, 6px 6px 0 #990000' }}>
-              JACKPOT DRAGON BALL
-            </h1>
-            <p className="text-3xl font-bold text-yellow-300">A ROLETA DOS GUERREIROS Z</p>
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <Trophy className="w-12 h-12 text-primary" />
+              <h1 className="text-6xl font-bold text-foreground">JACKPOT</h1>
+              <Trophy className="w-12 h-12 text-secondary" />
+            </div>
+            <p className="text-2xl text-muted-foreground">A Roleta Multiplayer 3D</p>
+            
+            {!walletAddress && (
+              <Button 
+                onClick={() => setShowWalletModal(true)}
+                className="mt-4 bg-primary text-primary-foreground hover:bg-primary/90 font-bold text-lg px-8"
+              >
+                Conectar Carteira
+              </Button>
+            )}
           </div>
 
-          {/* Pot Total */}
-          <Card className="bg-gradient-to-r from-yellow-400 to-orange-400 border-4 border-red-600 p-6 mb-8 shadow-2xl">
+          <Card className="bg-card border-2 border-primary p-6 mb-8">
             <div className="flex items-center justify-center gap-4">
-              <Trophy className="w-12 h-12 text-red-700" />
+              <Coins className="w-10 h-10 text-primary" />
               <div className="text-center">
-                <p className="text-xl font-bold text-red-800">PRÊMIO TOTAL</p>
-                <p className="text-5xl font-bold text-red-900">{totalPot} SOL</p>
+                <p className="text-xl font-bold text-muted-foreground">PRÊMIO TOTAL</p>
+                <p className="text-5xl font-bold text-primary">{totalPot} SOL</p>
               </div>
-              <Trophy className="w-12 h-12 text-red-700" />
+              <Coins className="w-10 h-10 text-secondary" />
             </div>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Roleta */}
             <Card className="bg-gradient-to-br from-red-700/90 to-orange-700/90 border-4 border-yellow-400 p-8 shadow-2xl backdrop-blur-sm">
               <h2 className="text-3xl font-bold text-yellow-300 text-center mb-6">ROLETA</h2>
