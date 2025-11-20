@@ -8,13 +8,18 @@ import { Roulette3D } from "@/components/Roulette3D";
 import { Users, Trophy, Coins, Play } from "lucide-react";
 
 const dbCharacters = [
-  { name: "Goku", color: "from-orange-500 to-red-500" },
-  { name: "Vegeta", color: "from-blue-500 to-indigo-600" },
-  { name: "Gohan", color: "from-purple-500 to-pink-600" },
-  { name: "Piccolo", color: "from-green-500 to-emerald-600" },
-  { name: "Trunks", color: "from-indigo-500 to-blue-600" },
-  { name: "Krillin", color: "from-yellow-500 to-orange-500" },
+  { name: "Goku", color: "from-orange-500 to-red-500", borderColor: "border-orange-300" },
+  { name: "Vegeta", color: "from-blue-500 to-indigo-600", borderColor: "border-blue-300" },
+  { name: "Gohan", color: "from-purple-500 to-pink-600", borderColor: "border-purple-300" },
+  { name: "Piccolo", color: "from-green-500 to-emerald-600", borderColor: "border-green-300" },
+  { name: "Trunks", color: "from-indigo-500 to-blue-600", borderColor: "border-indigo-300" },
+  { name: "Krillin", color: "from-yellow-500 to-orange-500", borderColor: "border-yellow-300" },
 ];
+
+const getCharacterColor = (characterName: string) => {
+  const character = dbCharacters.find(char => char.name === characterName);
+  return character || dbCharacters[0];
+};
 
 export default function JackpotDB() {
   const [players, setPlayers] = useState<Array<{id: string, character: string, bet: number}>>([]);
