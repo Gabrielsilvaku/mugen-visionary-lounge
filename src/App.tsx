@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Rifa from "./pages/Rifa";
 import Coinflip from "./pages/Coinflip";
 import Bolada from "./pages/Bolada";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/rifa" element={<Rifa />} />
           <Route path="/coinflip" element={<Coinflip />} />
           <Route path="/bolada" element={<Bolada />} />
