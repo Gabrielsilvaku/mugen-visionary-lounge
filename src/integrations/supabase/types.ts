@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_logs: {
+        Row: {
+          created_at: string | null
+          details: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          user_agent: string | null
+          wallet_address: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          wallet_address?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          wallet_address?: string | null
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          room: string | null
+          username: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          room?: string | null
+          username?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          room?: string | null
+          username?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       coinflip_history: {
         Row: {
           bet_amount: number
@@ -100,6 +157,102 @@ export type Database = {
           started_at?: string | null
           status?: string
           winner_wallet?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          title: string
+          type: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          title: string
+          type?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          title?: string
+          type?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      support_tickets: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          priority: string | null
+          status: string | null
+          subject: string
+          updated_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          priority?: string | null
+          status?: string | null
+          subject: string
+          updated_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          priority?: string | null
+          status?: string | null
+          subject?: string
+          updated_at?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string | null
+          games_played: number | null
+          id: string
+          level: number | null
+          total_spent: number | null
+          total_won: number | null
+          updated_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          games_played?: number | null
+          id?: string
+          level?: number | null
+          total_spent?: number | null
+          total_won?: number | null
+          updated_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          games_played?: number | null
+          id?: string
+          level?: number | null
+          total_spent?: number | null
+          total_won?: number | null
+          updated_at?: string | null
+          wallet_address?: string
         }
         Relationships: []
       }
